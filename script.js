@@ -23,6 +23,7 @@ function generateRandomPattern() {
 function startGame(){
   //initialize game variables
   progress = 0;
+  mistakeCounter = 0;
   gamePlaying = true;
   document.getElementById("startBtn").classList.add("hidden");
   document.getElementById("stopBtn").classList.remove("hidden");
