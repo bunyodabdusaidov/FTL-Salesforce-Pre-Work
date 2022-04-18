@@ -12,7 +12,7 @@ var volume = 0.5; //must be between 0.0 and 1.0
 var guessCounter = 0;
 var mistakeCounter = 0;
 
-function generateRandomPattern() {
+function generateRandomPattern(){
   //generate random pattern
   for (let i=1; i<=9; i++){
     var randomNumber = Math.floor(Math.random() * 6) + 1; //generate random number from 1 to 6
@@ -83,19 +83,22 @@ g.gain.setValueAtTime(0,context.currentTime)
 o.connect(g)
 o.start(0)
 
-function lightButton(btn){
-  document.getElementById("button"+btn).classList.add("lit")
+function showImage(btn){
+  var button = document.getElementById("button"+btn)
+  var imageSource = "url(assets/img" + btn + ".png)"; //image source
+  button.style.background = imageSource; //show background image 
 }
 
-function clearButton(btn){
-  document.getElementById("button"+btn).classList.remove("lit")
+function hideImage(btn){
+  var button = document.getElementById("button"+btn)
+  button.style.background = ""; //hide background image
 }
 
 function playSingleClue(btn){
   if(gamePlaying){
-    lightButton(btn);
+    showImage(btn);
     playTone(btn,clueHoldTime);
-    setTimeout(clearButton,clueHoldTime,btn);
+    setTimeout(hideImage,clueHoldTime,btn);
   }
 }
 
