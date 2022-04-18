@@ -4,12 +4,20 @@ const cluePauseTime = 333; //how long to pause in between clues
 const nextClueWaitTime = 1000; //how long to wait before starting playback of the clue sequence
 
 //Global Variables
-var pattern = [2, 2, 5, 1, 6, 4, 3, 5, 3];
+var pattern = [];
 var progress = 0;
 var gamePlaying = false;
 var tonePlaying = false;
 var volume = 0.5; //must be between 0.0 and 1.0
 var guessCounter = 0;
+
+function generateRandomPattern() {
+  //generate random pattern
+  for (let i=1; i<=9; i++){
+    var randomNumber = Math.floor(Math.random() * 6) + 1; //generate random number from 1 to 6
+    pattern.push(randomNumber); //append to pattern list
+  }
+}
 
 function startGame(){
     //initialize game variables
@@ -87,7 +95,7 @@ function playSingleClue(btn){
 function playClueSequence(){
   guessCounter = 0;
   let delay = nextClueWaitTime; // set delay to initial wait time
-  for(let i=0;i<=progress;i++){ // for each clue that is revealed so far
+  for(let i=0; i<=progress; i++){ // for each clue that is revealed so far
     console.log("play single clue: " + pattern[i] + " in " + delay + "ms")
     setTimeout(playSingleClue,delay,pattern[i]) // set a timeout to play that clue
     delay += clueHoldTime 
