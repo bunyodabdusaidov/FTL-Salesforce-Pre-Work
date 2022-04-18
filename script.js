@@ -86,12 +86,13 @@ function playSingleClue(btn){
 
 function playClueSequence(){
   guessCounter = 0;
-  let delay = nextClueWaitTime; //set delay to initial wait time
+  let delay = nextClueWaitTime; // set delay to initial wait time
   for(let i=0;i<=progress;i++){ // for each clue that is revealed so far
     console.log("play single clue: " + pattern[i] + " in " + delay + "ms")
     setTimeout(playSingleClue,delay,pattern[i]) // set a timeout to play that clue
     delay += clueHoldTime 
     delay += cluePauseTime;
+    clueHoldTime -= 15; // decrease clueHoldTime on each turn
   }
 }
 
