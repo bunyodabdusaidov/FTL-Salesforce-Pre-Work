@@ -10,6 +10,7 @@ var gamePlaying = false;
 var tonePlaying = false;
 var volume = 0.5; //must be between 0.0 and 1.0
 var guessCounter = 0;
+var mistakeCounter = 0;
 
 function generateRandomPattern() {
   //generate random pattern
