@@ -144,8 +144,13 @@ function guess(btn){
       guessCounter++;
     }
   }else{
-    //Guess was incorrect
-    //GAME OVER: LOSE!
-    loseGame();
+    //Guess was incorrect. Increment mistake counter
+    mistakeCounter++;
+    console.log("Mistakes = " + mistakeCounter);
+    if (mistakeCounter > 2){
+      //more than 2 mistakes
+      //GAME OVER: LOSE!
+      loseGame();
+    }
   }
 }
