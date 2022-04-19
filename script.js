@@ -1,16 +1,32 @@
 // global constants
-var clueHoldTime = 1000; //how long to hold each clue's light/sound
 const cluePauseTime = 333; //how long to pause in between clues
 const nextClueWaitTime = 1000; //how long to wait before starting playback of the clue sequence
+
+const FULL_DASH_ARRAY = 283;
+const WARNING_THRESHOLD = 10;
+const ALERT_THRESHOLD = 5;
+const TIME_LIMIT = 20;
+const COLOR_CODES = {
+  info: {color: "green"},
+  warning: {color: "orange", threshold: WARNING_THRESHOLD},
+  alert: {color: "red", threshold: ALERT_THRESHOLD}
+};
 
 //Global Variables
 var pattern = [];
 var progress = 0;
 var gamePlaying = false;
 var tonePlaying = false;
+var clueHoldTime = 1000; //how long to hold each clue's light/sound
 var volume = 0.5; //must be between 0.0 and 1.0
 var guessCounter = 0;
 var mistakeCounter = 0;
+var timePassed = 0;
+var timeLeft = TIME_LIMIT;
+var timerInterval = null;
+
+setTimePathInitialColor(timeLeft);
+displayCountdownTimer(timeLeft);
 
 function generateRandomPattern(){
   //generate random pattern
@@ -35,6 +51,7 @@ function stopGame(){
   gamePlaying = false;
   document.getElementById("startBtn").classList.remove("hidden");
   document.getElementById("stopBtn").classList.add("hidden");
+  onTimesUp();
 }
 
 // Sound Synthesis Functions
@@ -94,6 +111,76 @@ function hideImage(btn){
   button.style.background = ""; //hide background image
 }
 
+function formatTimeLeft(time) {
+  const minutes = Math.floor(time / 60);
+  let seconds = time % 60;
+  if (seconds < 10) {
+    seconds = `0${seconds}`;
+  }
+  return `${minutes}:${seconds}`;
+}
+
+function displayCountdownTimer(timeLeft){
+  document.getElementById("base-timer-label").innerHTML = formatTimeLeft(timeLeft)
+}
+
+function setTimePathInitialColor(timeLeft){
+  const {alert, warning, info} = COLOR_CODES;
+  if (timeLeft <= alert.threshold){
+    document.getElementById("base-timer-path-remaining").classList.remove(alert.color);
+  }
+  else if (timeLeft <= warning.threshold){
+    document.getElementById("base-timer-path-remaining").classList.remove(warning.color);
+  }
+  document.getElementById("base-timer-path-remaining").classList.add(info.color);
+}
+
+function setRemainingPathColor(timeLeft){
+  const {alert, warning, info} = COLOR_CODES;
+  if (timeLeft <= alert.threshold){
+    document.getElementById("base-timer-path-remaining").classList.remove(warning.color);
+    document.getElementById("base-timer-path-remaining").classList.add(alert.color)
+  }
+  else if (timeLeft <= warning.threshold){
+    document.getElementById("base-timer-path-remaining").classList.remove(info.color);
+    document.getElementById("base-timer-path-remaining").classList.add(warning.color);
+  }
+}
+
+function calculateTimeFraction() {
+  const rawTimeFraction = timeLeft / TIME_LIMIT;
+  return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
+}
+
+function setCircleDasharray() {
+  const circleDasharray = `${(
+    calculateTimeFraction() * FULL_DASH_ARRAY).toFixed(0)} 283`;
+    document.getElementById("base-timer-path-remaining").setAttribute("stroke-dasharray", circleDasharray);
+}
+
+function onTimesUp(){
+  setTimePathInitialColor(timeLeft);
+  timeLeft = TIME_LIMIT;
+  timePassed = 0;
+  displayCountdownTimer(timeLeft);
+  clearInterval(timerInterval);
+  setCircleDasharray();
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timePassed++;
+    timeLeft = TIME_LIMIT - timePassed;
+    console.log("timeLeft = "+timeLeft);
+    document.getElementById("base-timer-label").innerHTML = formatTimeLeft(timeLeft);
+    setCircleDasharray();
+    setRemainingPathColor(timeLeft);
+    if (timeLeft === 0){
+      loseGame();
+    }
+  }, 1000);
+}
+
 function playSingleClue(btn){
   if(gamePlaying){
     showImage(btn);
@@ -112,6 +199,7 @@ function playClueSequence(){
     delay += cluePauseTime;
     clueHoldTime -= 15; // decrease clueHoldTime on each turn
   }
+  startTimer()
 }
 
 function loseGame(){
@@ -140,6 +228,7 @@ function guess(btn){
       }else{
         //Pattern correct. Add next segment
         progress++;
+        onTimesUp();
         playClueSequence();
       }
     }else{
