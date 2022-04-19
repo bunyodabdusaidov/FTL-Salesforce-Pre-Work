@@ -18,7 +18,7 @@ button {
 
 #gameButtonArea {
     position: fixed;
-    bottom: 10%;
+    bottom: 40%;
 }
 
 #gameButtonArea > button {
@@ -52,7 +52,7 @@ button {
 }
 
 #button6 {
-    background: orange;
+    background: lightsalmon;
 }
 
 /* Sets the containers height and width */
@@ -60,7 +60,7 @@ button {
     height: 150px;
     width: 150px;
     position: fixed;
-    bottom: 60%;
+    bottom: 75%;
     right: 45%;
     object-position: right top;
 }

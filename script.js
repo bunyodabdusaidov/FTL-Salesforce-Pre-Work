@@ -25,8 +25,8 @@ var timePassed = 0;
 var timeLeft = TIME_LIMIT;
 var timerInterval = null;
 
-setTimePathInitialColor(timeLeft); //initialize initial color
-displayCountdownTimer(timeLeft); //initialize initial timer
+setTimePathInitialColor(timeLeft); //initialize color
+displayCountdownTimer(timeLeft); //initialize timer
 
 function generateRandomPattern(){
   //generate random pattern
