@@ -25,8 +25,8 @@ var timePassed = 0;
 var timeLeft = TIME_LIMIT;
 var timerInterval = null;
 
-setTimePathInitialColor(timeLeft);
-displayCountdownTimer(timeLeft);
+setTimePathInitialColor(timeLeft); //initialize initial color
+displayCountdownTimer(timeLeft); //initialize initial timer
 
 function generateRandomPattern(){
   //generate random pattern
@@ -51,7 +51,7 @@ function stopGame(){
   gamePlaying = false;
   document.getElementById("startBtn").classList.remove("hidden");
   document.getElementById("stopBtn").classList.add("hidden");
-  onTimesUp();
+  stopTimer();
 }
 
 // Sound Synthesis Functions
@@ -111,7 +111,7 @@ function hideImage(btn){
   button.style.background = ""; //hide background image
 }
 
-function formatTimeLeft(time) {
+function formatTimeLeft(time){
   const minutes = Math.floor(time / 60);
   let seconds = time % 60;
   if (seconds < 10) {
@@ -126,6 +126,7 @@ function displayCountdownTimer(timeLeft){
 
 function setTimePathInitialColor(timeLeft){
   const {alert, warning, info} = COLOR_CODES;
+  //change color from orange or red to green
   if (timeLeft <= alert.threshold){
     document.getElementById("base-timer-path-remaining").classList.remove(alert.color);
   }
@@ -137,6 +138,7 @@ function setTimePathInitialColor(timeLeft){
 
 function setRemainingPathColor(timeLeft){
   const {alert, warning, info} = COLOR_CODES;
+  //change color in particular time thresholds
   if (timeLeft <= alert.threshold){
     document.getElementById("base-timer-path-remaining").classList.remove(warning.color);
     document.getElementById("base-timer-path-remaining").classList.add(alert.color)
@@ -147,18 +149,19 @@ function setRemainingPathColor(timeLeft){
   }
 }
 
-function calculateTimeFraction() {
+function calculateTimeFraction(){
   const rawTimeFraction = timeLeft / TIME_LIMIT;
   return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
 }
 
-function setCircleDasharray() {
+function setCircleDasharray(){
   const circleDasharray = `${(
     calculateTimeFraction() * FULL_DASH_ARRAY).toFixed(0)} 283`;
     document.getElementById("base-timer-path-remaining").setAttribute("stroke-dasharray", circleDasharray);
 }
 
-function onTimesUp(){
+function stopTimer(){
+  //reset variables, color, and timer
   setTimePathInitialColor(timeLeft);
   timeLeft = TIME_LIMIT;
   timePassed = 0;
@@ -167,7 +170,7 @@ function onTimesUp(){
   setCircleDasharray();
 }
 
-function startTimer() {
+function startTimer(){
   timerInterval = setInterval(() => {
     timePassed++;
     timeLeft = TIME_LIMIT - timePassed;
@@ -228,7 +231,7 @@ function guess(btn){
       }else{
         //Pattern correct. Add next segment
         progress++;
-        onTimesUp();
+        stopTimer();
         playClueSequence();
       }
     }else{
