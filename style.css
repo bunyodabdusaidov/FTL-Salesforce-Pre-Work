@@ -31,6 +31,26 @@ button {
     display: none;
 }
 
+#mistakes {
+    position: absolute;
+    top: 40px;
+    right: 22%;
+    padding: 10px;
+    background-color: #efefef;
+    border-radius: 10px;
+    color: black;
+}
+
+#score {
+    position: absolute;
+    top: 40px;
+    right: 12%;
+    padding: 10px;
+    background-color: #efefef;
+    border-radius: 10px;
+    color: black;
+}
+
 #button1 {
     background: lightgreen;  
 }

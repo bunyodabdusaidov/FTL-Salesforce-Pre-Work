@@ -11,6 +11,8 @@ const COLOR_CODES = {
   warning: {color: "orange", threshold: WARNING_THRESHOLD},
   alert: {color: "red", threshold: ALERT_THRESHOLD}
 };
+const MAX_SCORE = 10;
+const MAX_MISTAKE = 3;
 
 //Global Variables
 var pattern = [];
@@ -24,13 +26,16 @@ var mistakeCounter = 0;
 var timePassed = 0;
 var timeLeft = TIME_LIMIT;
 var timerInterval = null;
+var scoreCounter = 0;
 
-setTimePathInitialColor(timeLeft); //initialize color
-displayCountdownTimer(timeLeft); //initialize timer
+setTimePathInitialColor(); //initialize color
+displayCountdownTimer(); //initialize timer
+displayScore(); //initialize score
+displayMistakes(); //initialize mistakes
 
 function generateRandomPattern(){
   //generate random pattern
-  for (let i=1; i<=9; i++){
+  for (let i=1; i<=10; i++){
     var randomNumber = Math.floor(Math.random() * 6) + 1; //generate random number from 1 to 6
     pattern.push(randomNumber); //append to pattern list
   }
@@ -38,12 +43,17 @@ function generateRandomPattern(){
 
 function startGame(){
   //initialize game variables
+  pattern = [];
   progress = 0;
+  timePassed = 0;
   mistakeCounter = 0;
   gamePlaying = true;
+  scoreCounter = 0;
   document.getElementById("startBtn").classList.add("hidden");
   document.getElementById("stopBtn").classList.remove("hidden");
   generateRandomPattern(); //generate random pattern
+  displayScore();
+  displayMistakes();
   playClueSequence();
 }
 
@@ -51,6 +61,8 @@ function stopGame(){
   gamePlaying = false;
   document.getElementById("startBtn").classList.remove("hidden");
   document.getElementById("stopBtn").classList.add("hidden");
+  displayScore();
+  displayMistakes();
   stopTimer();
 }
 
@@ -120,11 +132,11 @@ function formatTimeLeft(time){
   return `${minutes}:${seconds}`;
 }
 
-function displayCountdownTimer(timeLeft){
+function displayCountdownTimer(){
   document.getElementById("base-timer-label").innerHTML = formatTimeLeft(timeLeft)
 }
 
-function setTimePathInitialColor(timeLeft){
+function setTimePathInitialColor(){
   const {alert, warning, info} = COLOR_CODES;
   //change color from orange or red to green
   if (timeLeft <= alert.threshold){
@@ -136,7 +148,7 @@ function setTimePathInitialColor(timeLeft){
   document.getElementById("base-timer-path-remaining").classList.add(info.color);
 }
 
-function setRemainingPathColor(timeLeft){
+function setRemainingPathColor(){
   const {alert, warning, info} = COLOR_CODES;
   //change color in particular time thresholds
   if (timeLeft <= alert.threshold){
@@ -174,14 +186,27 @@ function startTimer(){
   timerInterval = setInterval(() => {
     timePassed++;
     timeLeft = TIME_LIMIT - timePassed;
-    console.log("timeLeft = "+timeLeft);
     document.getElementById("base-timer-label").innerHTML = formatTimeLeft(timeLeft);
     setCircleDasharray();
     setRemainingPathColor(timeLeft);
     if (timeLeft === 0){
-      loseGame();
+      loseGame(scoreCounter);
     }
   }, 1000);
+}
+
+function displayScore(){
+  if (!gamePlaying){
+    scoreCounter = 0;
+  }
+  document.getElementById("score-counter").innerHTML = scoreCounter + " / " + MAX_SCORE;
+}
+
+function displayMistakes(){
+  if (!gamePlaying){
+    mistakeCounter = 0;
+  }
+  document.getElementById("mistake-counter").innerHTML = mistakeCounter + " / " + MAX_MISTAKE;
 }
 
 function playSingleClue(btn){
@@ -200,19 +225,19 @@ function playClueSequence(){
     setTimeout(playSingleClue,delay,pattern[i]) // set a timeout to play that clue
     delay += clueHoldTime 
     delay += cluePauseTime;
-    clueHoldTime -= 15; // decrease clueHoldTime on each turn
+    clueHoldTime -= 10; // decrease clueHoldTime on each turn
   }
   startTimer()
 }
 
-function loseGame(){
+function loseGame(score){
   stopGame();
-  alert("Game Over. You lost.");
+  alert("Game Over. You lost! Your score: " + score);
 }
 
-function winGame(){
+function winGame(score){
   stopGame();
-  alert("Game Over. You won!")
+  alert("Game Over. You won! Your score: " + score);
 }
 
 function guess(btn){
@@ -227,11 +252,15 @@ function guess(btn){
     if(guessCounter == progress){
       if(progress == pattern.length - 1){
         //GAME OVER: WIN!
-        winGame();
+        scoreCounter = MAX_SCORE;
+        displayScore();
+        setTimeout(winGame, 250, scoreCounter);
       }else{
         //Pattern correct. Add next segment
         progress++;
+        scoreCounter++;
         stopTimer();
+        displayScore();
         playClueSequence();
       }
     }else{
@@ -241,11 +270,11 @@ function guess(btn){
   }else{
     //Guess was incorrect. Increment mistake counter
     mistakeCounter++;
-    console.log("Mistakes = " + mistakeCounter);
-    if (mistakeCounter > 2){
+    displayMistakes();
+    if (mistakeCounter >= MAX_MISTAKE){
       //more than 2 mistakes
       //GAME OVER: LOSE!
-      loseGame();
+      setTimeout(loseGame, 250, scoreCounter);
     }
   }
 }
