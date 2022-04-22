@@ -140,7 +140,7 @@ o.start(0)
 
 function showImage(btn){
   var button = document.getElementById("button"+btn)
-  var imageSource = "url(/assets/img" + btn + ".png) center /185px"; //image source
+  var imageSource = "url(https://cdn.glitch.global/f5e31ad8-048e-4640-a325-2fa3a6d9328f/img" + btn + ".png?v=1650662480055.png) center /185px"; //image source
   button.style.background = imageSource; //show background image 
 }
 
