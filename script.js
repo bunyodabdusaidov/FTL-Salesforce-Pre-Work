@@ -11,69 +11,95 @@ const COLOR_CODES = {
   warning: {color: "orange", threshold: WARNING_THRESHOLD},
   alert: {color: "red", threshold: ALERT_THRESHOLD}
 };
-const MAX_SCORE = 10;
+
 const MAX_MISTAKE = 3;
+const MAX_LEVEL = 5;
 
 //Global Variables
 var pattern = [];
 var progress = 0;
 var gamePlaying = false;
+var nextLevelPlaying = false;
 var tonePlaying = false;
-var clueHoldTime = 1000; //how long to hold each clue's light/sound
+var clueHoldTime = 800; //how long to hold each clue's light/sound
 var volume = 0.5; //must be between 0.0 and 1.0
 var guessCounter = 0;
 var mistakeCounter = 0;
 var timePassed = 0;
 var timeLeft = TIME_LIMIT;
 var timerInterval = null;
-var scoreCounter = 0;
+var levelCounter = 0;
+var patternLen = 3; //initial length of pattern
 
 setTimePathInitialColor(); //initialize color
 displayCountdownTimer(); //initialize timer
-displayScore(); //initialize score
 displayMistakes(); //initialize mistakes
+displayLevel(); //initialize level
 
 function generateRandomPattern(){
-  //generate random pattern
-  for (let i=1; i<=10; i++){
-    var randomNumber = Math.floor(Math.random() * 6) + 1; //generate random number from 1 to 6
+  //generate random pattern;
+  for (let i=1; i<=patternLen; i++){
+    var randomNumber = Math.floor(Math.random() * 7) + 1; //generate random number from 1 to 7
     pattern.push(randomNumber); //append to pattern list
   }
 }
 
 function startGame(){
   //initialize game variables
-  pattern = [];
+  pattern = []
+  gamePlaying = true;
   progress = 0;
   timePassed = 0;
   mistakeCounter = 0;
-  gamePlaying = true;
-  scoreCounter = 0;
+  if(nextLevelPlaying){
+    //if player continues playing
+    clueHoldTime -= 50; //decrease clue hold time as level goes up
+    patternLen++; //increase pattern length as level goes up
+  }
+  else{
+    //if new game starts, reset variables
+    levelCounter = 0;
+    clueHoldTime = 800;
+    patternLen = 3;
+  }
   document.getElementById("startBtn").classList.add("hidden");
   document.getElementById("stopBtn").classList.remove("hidden");
-  generateRandomPattern(); //generate random pattern
-  displayScore();
+  document.getElementById("popup").classList.add("hidden");
+  generateRandomPattern();
   displayMistakes();
+  displayLevel();
   playClueSequence();
 }
 
 function stopGame(){
+  levelCounter = 0;
+  mistakeCounter = 0;
   gamePlaying = false;
+  nextLevelPlaying = false;
+  displayMistakes();
+  displayLevel();
+  stopTimer();
   document.getElementById("startBtn").classList.remove("hidden");
   document.getElementById("stopBtn").classList.add("hidden");
-  displayScore();
-  displayMistakes();
-  stopTimer();
+  document.getElementById("popup").classList.add("hidden");
+}
+
+function startNextLevel(){
+  nextLevelPlaying = true;
+  document.getElementById("stopBtn").classList.remove("hidden");
+  document.getElementById("popup").classList.add("hidden");
+  startGame();
 }
 
 // Sound Synthesis Functions
 const freqMap = {
-  1: 261.6,
-  2: 329.6,
-  3: 392,
-  4: 466.2,
-  5: 250.1,
-  6: 498.4
+  1: 261.63, //do
+  2: 293.66, //re
+  3: 329.63, //mi
+  4: 349.23, //fa
+  5: 392.00, //so
+  6: 220.00, //la
+  7: 246.94  //si
 }
 
 function playTone(btn,len){ 
@@ -114,7 +140,7 @@ o.start(0)
 
 function showImage(btn){
   var button = document.getElementById("button"+btn)
-  var imageSource = "url(https://cdn.glitch.global/f5e31ad8-048e-4640-a325-2fa3a6d9328f/img" + btn + ".png?v=1650350283585)"; //image source
+  var imageSource = "url(/assets/img" + btn + ".png) center /185px"; //image source
   button.style.background = imageSource; //show background image 
 }
 
@@ -190,23 +216,18 @@ function startTimer(){
     setCircleDasharray();
     setRemainingPathColor(timeLeft);
     if (timeLeft === 0){
-      loseGame(scoreCounter);
+      loseGame();
     }
   }, 1000);
 }
 
-function displayScore(){
-  if (!gamePlaying){
-    scoreCounter = 0;
-  }
-  document.getElementById("score-counter").innerHTML = scoreCounter + " / " + MAX_SCORE;
+function displayMistakes(){
+  document.getElementById("mistakes").innerHTML = mistakeCounter + " / " + MAX_MISTAKE;
 }
 
-function displayMistakes(){
-  if (!gamePlaying){
-    mistakeCounter = 0;
-  }
-  document.getElementById("mistake-counter").innerHTML = mistakeCounter + " / " + MAX_MISTAKE;
+function displayLevel(){
+  document.getElementById("level").innerHTML = levelCounter + " / " + MAX_LEVEL;
+  document.getElementById("levelOnPopup").innerHTML = levelCounter + " / " + MAX_LEVEL;
 }
 
 function playSingleClue(btn){
@@ -225,19 +246,47 @@ function playClueSequence(){
     setTimeout(playSingleClue,delay,pattern[i]) // set a timeout to play that clue
     delay += clueHoldTime 
     delay += cluePauseTime;
-    clueHoldTime -= 10; // decrease clueHoldTime on each turn
+    clueHoldTime -= 5; // decrease clueHoldTime on each turn
   }
   startTimer()
 }
 
-function loseGame(score){
-  stopGame();
-  alert("Game Over. You lost! Your score: " + score);
+function loseGame(){
+  mistakeCounter = 0;
+  levelCounter = 0;
+  nextLevelPlaying = false;
+  document.getElementById("popupHeading").innerHTML = "Game over! You lost!"
+  document.getElementById("popupMessage").innerHTML = "Do you want to play again?";
+  document.getElementById("resumeOnPopup").classList.add("hidden");
+  document.getElementById("restartOnPopup").style.backgroundColor = "lightgreen";
+  document.getElementById("popup").classList.remove("hidden");
+  stopTimer();
 }
 
-function winGame(score){
-  stopGame();
-  alert("Game Over. You won! Your score: " + score);
+function nextLevel(){
+  document.getElementById("popupHeading").innerHTML = "You leveled up!";
+  document.getElementById("popupMessage").innerHTML = "Do you want to continue?";
+  document.getElementById("resumeOnPopup").classList.remove("hidden");
+  document.getElementById("restartOnPopup").innerHTML = "Restart"
+  document.getElementById("stopOnPopup").innerHTML = "Stop"
+  document.getElementById("resumeOnPopup").innerHTML = "Next"
+  document.getElementById("popup").classList.remove("hidden");
+  document.querySelector("#restartOnPopup").addEventListener("click", ()=>{nextLevelPlaying=false}, true);
+  stopTimer();
+}
+
+function winGame(){
+  mistakeCounter = 0;
+  levelCounter = 0;
+  nextLevelPlaying = false;
+  document.getElementById("popupHeading").innerHTML = "Congratulations! You Won!";
+  document.getElementById("popupMessage").innerHTML = "Do you want to play again?";
+  document.getElementById("restartOnPopup").innerHTML = "Start Game"
+  document.getElementById("stopOnPopup").innerHTML = "Exit Game"
+  document.getElementById("resumeOnPopup").classList.add("hidden");
+  document.getElementById("restartOnPopup").style.backgroundColor = "lightgreen";
+  document.getElementById("popup").classList.remove("hidden");
+  stopTimer();
 }
 
 function guess(btn){
@@ -251,16 +300,21 @@ function guess(btn){
     //Guess was correct!
     if(guessCounter == progress){
       if(progress == pattern.length - 1){
-        //GAME OVER: WIN!
-        scoreCounter = MAX_SCORE;
-        displayScore();
-        setTimeout(winGame, 250, scoreCounter);
+        levelCounter++;
+        displayLevel();
+        if (levelCounter == MAX_LEVEL){
+          //Win game!
+          setTimeout(winGame, 250);
+        }
+        else{
+          //Next level!
+          setTimeout(nextLevel, 250);
+        }
       }else{
         //Pattern correct. Add next segment
         progress++;
-        scoreCounter++;
         stopTimer();
-        displayScore();
+        displayLevel()
         playClueSequence();
       }
     }else{
@@ -274,7 +328,7 @@ function guess(btn){
     if (mistakeCounter >= MAX_MISTAKE){
       //more than 2 mistakes
       //GAME OVER: LOSE!
-      setTimeout(loseGame, 250, scoreCounter);
+      setTimeout(loseGame, 250);
     }
   }
 }

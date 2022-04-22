@@ -21,20 +21,21 @@
     Welcome to the game! Repeat back the pattern by pressing buttons.
     </p>
       
-    <button id="startBtn" onclick="startGame()">
-      Start
-    </button>
-    <button id="stopBtn" class="hidden" onclick="stopGame()"> 
-      Stop
-    </button>
+    <button id="startBtn" onclick="startGame()">Start</button>
+    <button id="stopBtn" class="hidden" onclick="stopGame()">Stop</button>
 
-    <div id="mistakes">
-      Mistakes: <span id="mistake-counter"><!--Mistake counter--></span>
+    <div id="popup" class="hidden">
+      <h2 id="popupHeading"><!--Pop heading--></h2>
+      <h3 id="popupMessage"><!--Popup message--></h3>
+      <p id="levelCounterOnPopup">Level: <span id="levelOnPopup"><!--Level counter--></span></p>
+
+      <button id="restartOnPopup" onclick="startGame()" class="popupBtn"><!--Restart Game--></button>
+      <button id="stopOnPopup" onclick="stopGame()" class="popupBtn"><!--Stop Game--></button>
+      <button id="resumeOnPopup" onclick="startNextLevel()" class="popupBtn"><!--Next Level--></button>
     </div>
 
-    <div id="score">
-      Score: <span id="score-counter"><!--Score counter--></span>
-    </div>
+    <div id="mistakeCounter">Mistakes: <span id="mistakes"><!--Mistake counter--></span></div>
+    <div id="levelCounter">Level: <span id="level"><!--Level counter--></span></div>
 
     <div id="base-timer">
       <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -59,6 +60,7 @@
       <button id="button4" onclick="guess(4)" onmousedown="startTone(4); showImage(4)" onmouseup="stopTone(); hideImage(4)"></button>
       <button id="button5" onclick="guess(5)" onmousedown="startTone(5); showImage(5)" onmouseup="stopTone(); hideImage(5)"></button>
       <button id="button6" onclick="guess(6)" onmousedown="startTone(6); showImage(6)" onmouseup="stopTone(); hideImage(6)"></button>
+      <button id="button7" onclick="guess(7)" onmousedown="startTone(7); showImage(7)" onmouseup="stopTone(); hideImage(7)"></button>
     </div>
 
   </body>

@@ -11,9 +11,91 @@ h1 {
     font-family: verdana, arial, sans-serif;  
 }
 
+h2 {
+    color: black;
+}
+
+.hidden {
+    display: none;
+}
+
 button {
-    padding: 10px;
-    border-radius: 10px;  
+    padding: 12px;
+    border-radius: 12px;
+}
+
+#startBtn {
+    background-color: lightgreen;
+}
+
+#stopBtn {
+    color: white;
+    background-color: red;
+}
+
+#popupMessage, #popupHeading {
+    color: black;
+}
+
+/* Popup window */
+#popup {
+    background-color: skyblue;
+    width: 420px;
+    padding: 50px 40px;
+    position: absolute;
+    transform: translate(-50%,-65%);
+    left: 50%;
+    top: 50%;
+    border-radius: 12px;
+    text-align: center;
+    z-index: 1;
+}
+
+.popupBtn {
+    margin: 5px;
+    position: relative;
+}
+
+#restartOnPopup {
+    background-color: lightyellow;
+}
+
+#stopOnPopup {
+    color: white;
+    background-color: red;
+}
+
+#resumeOnPopup {
+    background-color: lightgreen;
+}
+
+#levelCounterOnPopup{
+    position: absolute;
+    top: 0%;
+    right: 5%;
+    padding: 12px;
+    color: black;
+    font-weight: bold;
+}
+
+#mistakeCounter {
+    position: absolute;
+    top: 6%;
+    right: 15%;
+    padding: 12px;
+    background-color: #efefef;
+    border-radius: 12px;
+    color: black;
+}
+
+#levelCounter {
+    position: absolute;
+    top: 6%;
+    right: 5%;
+    padding: 12px;
+    background-color: #efefef;
+    border-radius: 12px;
+    color: black;
 }
 
 #gameButtonArea {
@@ -22,37 +104,13 @@ button {
 }
 
 #gameButtonArea > button {
-    width:200px;
-    height:200px;
+    width:185px;
+    height:185px;
     margin:2px;
 }
 
-.hidden {
-    display: none;
-}
-
-#mistakes {
-    position: absolute;
-    top: 40px;
-    right: 22%;
-    padding: 10px;
-    background-color: #efefef;
-    border-radius: 10px;
-    color: black;
-}
-
-#score {
-    position: absolute;
-    top: 40px;
-    right: 12%;
-    padding: 10px;
-    background-color: #efefef;
-    border-radius: 10px;
-    color: black;
-}
-
 #button1 {
-    background: lightgreen;  
+    background: white;  
 }
 
 #button2 {
@@ -68,11 +126,15 @@ button {
 }
 
 #button5 {
-    background: white;
+    background: lightseagreen;
 }
 
 #button6 {
     background: lightsalmon;
+}
+
+#button7 {
+    background: lavender;
 }
 
 /* Sets the containers height and width */
@@ -81,7 +143,7 @@ button {
     width: 150px;
     position: fixed;
     bottom: 75%;
-    right: 45%;
+    right: 40%;
     object-position: right top;
 }
 
