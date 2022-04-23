@@ -92,9 +92,13 @@ If you recorded multiple GIFs for all the implemented features, you can add them
 * I would definitely look at how I can make my code DRY because I feel like I repeated some implementations whereas I could make them to be used generically. I would improve styles and add some animations like in real games.
 
 * I would also make so that players can participate in a contest and win very cheap NFTs or small of portions of cryptocurrencies; just to make the game more interesting. 
+
 ## Interview Recording URL Link
 
 [My 5-minute Interview Recording](https://www.loom.com/share/055e0d8cfb52445eb6266acd75247a9c)
+
+
+https://user-images.githubusercontent.com/65746829/164872782-10b715a0-73c7-42b0-aec6-f1c9a2e7ce6b.mp4
 
 
 ## License
